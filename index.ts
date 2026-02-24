@@ -42,7 +42,7 @@ export default function register(api: any) {
 
   api.registerCommand({
     name: "cron",
-    description: "Show cron dashboard (jobs + scripts + latest reports)",
+    description: "Show cron dashboard (crontab + systemd timers + scripts + latest reports)",
     requireAuth: false,
     acceptsArgs: false,
     handler: async () => {
@@ -50,26 +50,42 @@ export default function register(api: any) {
       lines.push("Cron dashboard");
       lines.push("");
 
+      // 1) user crontab
       const crontab = safeExec("crontab -l");
       if (crontab) {
         const jobs = crontab
           .split("\n")
           .map((l) => l.trim())
           .filter((l) => l && !l.startsWith("#"));
-        lines.push(`Jobs (${jobs.length}):`);
+        lines.push(`crontab jobs (${jobs.length}):`);
         lines.push("```text");
         for (const j of jobs.slice(0, 50)) lines.push(j);
         if (jobs.length > 50) lines.push("... (truncated)");
         lines.push("```");
       } else {
-        lines.push("No crontab entries found (or permission denied).");
+        lines.push("No user crontab entries found (or permission denied).");
       }
 
       lines.push("");
 
+      // 2) systemd user timers (best-effort)
+      const timers = safeExec("systemctl --user list-timers --all --no-pager");
+      if (timers) {
+        const tlines = timers.split("\n").slice(0, 25);
+        lines.push("systemd user timers (top 25):");
+        lines.push("```text");
+        for (const l of tlines) lines.push(l);
+        lines.push("```");
+      } else {
+        lines.push("No systemd user timers found (or systemctl not available).");
+      }
+
+      lines.push("");
+
+      // 3) scripts folder
       try {
         const scripts = fs.readdirSync(cronScripts).filter((f) => f.endsWith(".sh"));
-        lines.push(`Scripts (${scripts.length}):`);
+        lines.push(`cron/scripts (${scripts.length}):`);
         lines.push("```text");
         for (const s of scripts.sort()) {
           const st = fs.statSync(path.join(cronScripts, s));
@@ -82,6 +98,7 @@ export default function register(api: any) {
 
       lines.push("");
 
+      // 4) latest reports
       const latestPrivacy = latestFile(cronReports, "github-privacy-scan_");
       if (latestPrivacy) {
         lines.push("Latest privacy scan report:");
@@ -187,8 +204,40 @@ export default function register(api: any) {
         msg.push("No OAuth/token status section found in output.");
       }
 
+      // Also show rate-limit cooldown windows from model-failover state file (if present)
+      try {
+        const statePath = path.join(workspace, "memory", "model-ratelimits.json");
+        if (fs.existsSync(statePath)) {
+          const raw = fs.readFileSync(statePath, "utf-8");
+          const st = JSON.parse(raw) as any;
+          const lim = (st?.limited ?? {}) as Record<string, { lastHitAt: number; nextAvailableAt: number; reason?: string }>;
+          const now = Math.floor(Date.now() / 1000);
+
+          const active = Object.entries(lim)
+            .map(([model, v]) => ({ model, ...v }))
+            .filter((v) => typeof v.nextAvailableAt === "number" && v.nextAvailableAt > now)
+            .sort((a, b) => a.nextAvailableAt - b.nextAvailableAt)
+            .slice(0, 30);
+
+          if (active.length) {
+            msg.push("");
+            msg.push("Rate-limit cooldowns (model-failover):");
+            msg.push("```text");
+            for (const a of active) {
+              const etaSec = a.nextAvailableAt - now;
+              const etaMin = Math.max(0, Math.round(etaSec / 60));
+              const untilIso = new Date(a.nextAvailableAt * 1000).toISOString();
+              msg.push(`${a.model}  until ${untilIso}  (~${etaMin}m)`);
+            }
+            msg.push("```");
+          }
+        }
+      } catch {
+        // ignore
+      }
+
       msg.push("");
-      msg.push("Note: per-model rate-limit reset times are not currently exposed by OpenClaw CLI. If you want, I can add that to the model-failover plugin state and surface it here.");
+      msg.push("Note: OpenClaw CLI does not currently show per-model rate-limit reset times. The cooldown section above is computed from the local model-failover state.");
 
       return { text: msg.join("\n") };
     },
