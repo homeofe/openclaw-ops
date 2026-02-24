@@ -130,4 +130,67 @@ export default function register(api: any) {
       return { text: lines.join("\n") };
     },
   });
+
+  api.registerCommand({
+    name: "limits",
+    description: "Show model/provider auth expiries and status (best-effort)",
+    requireAuth: false,
+    acceptsArgs: false,
+    handler: async () => {
+      // Today, `openclaw models status` does not expose per-model rate-limit reset times.
+      // What we CAN show reliably is the auth token/OAuth expiry window per provider,
+      // which is often the next hard stop in practice.
+      const out = safeExec("openclaw models status");
+      if (!out) return { text: "Failed to run: openclaw models status" };
+
+      const lines = out.split("\n");
+
+      // Extract key header lines
+      const pick = (prefix: string) => lines.find((l) => l.startsWith(prefix)) ?? "";
+      const header = [
+        pick("Default"),
+        pick("Fallbacks"),
+        pick("Configured models"),
+      ].filter(Boolean);
+
+      // Extract OAuth/token expiry section
+      const startIdx = lines.findIndex((l) => l.trim() === "OAuth/token status");
+      const expiry: string[] = [];
+      if (startIdx >= 0) {
+        for (const l of lines.slice(startIdx + 1)) {
+          if (!l.trim()) continue;
+          // keep provider headings and their child lines
+          if (/^\s*-\s+/.test(l)) expiry.push(l);
+          else if (/^\s{2,}-\s+/.test(l)) expiry.push(l);
+          // stop if it looks like a new top-level section (defensive)
+          if (/^\S/.test(l) && l.trim() !== "OAuth/token status") break;
+        }
+      }
+
+      const msg: string[] = [];
+      msg.push("Limits (best-effort)");
+      msg.push("");
+      if (header.length) {
+        msg.push("```text");
+        for (const h of header) msg.push(h);
+        msg.push("```");
+        msg.push("");
+      }
+
+      if (expiry.length) {
+        msg.push("Auth expiry windows:");
+        msg.push("```text");
+        for (const l of expiry.slice(0, 80)) msg.push(l);
+        if (expiry.length > 80) msg.push("... (truncated)");
+        msg.push("```");
+      } else {
+        msg.push("No OAuth/token status section found in output.");
+      }
+
+      msg.push("");
+      msg.push("Note: per-model rate-limit reset times are not currently exposed by OpenClaw CLI. If you want, I can add that to the model-failover plugin state and surface it here.");
+
+      return { text: msg.join("\n") };
+    },
+  });
 }
