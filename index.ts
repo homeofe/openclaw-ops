@@ -149,6 +149,49 @@ export default function register(api: any) {
   });
 
   api.registerCommand({
+    name: "release",
+    description: "Show staging gateway + human GO checklist (QA gate)",
+    requireAuth: false,
+    acceptsArgs: false,
+    handler: async () => {
+      const p = path.join(workspace, "openclaw-ops", "RELEASE.md");
+      const lines: string[] = [];
+      lines.push("Release / QA");
+      lines.push("");
+      if (fs.existsSync(p)) {
+        const txt = fs.readFileSync(p, "utf-8").trim();
+        // WhatsApp-friendly: keep it short
+        const out = txt.split("\n").slice(0, 160).join("\n");
+        lines.push(out);
+        if (txt.split("\n").length > 160) lines.push("\n... (truncated)");
+      } else {
+        lines.push(`Missing: ${p}`);
+      }
+      return { text: lines.join("\n") };
+    },
+  });
+
+  api.registerCommand({
+    name: "handoff",
+    description: "Show latest handoff log entries for openclaw-ops",
+    requireAuth: false,
+    acceptsArgs: false,
+    handler: async () => {
+      const p = path.join(workspace, "openclaw-ops", ".ai", "handoff", "LOG.md");
+      if (!fs.existsSync(p)) return { text: `Missing: ${p}` };
+      const txt = fs.readFileSync(p, "utf-8");
+      const tail = txt.split("\n").slice(-40).join("\n").trim();
+      const lines: string[] = [];
+      lines.push("openclaw-ops handoff (tail)");
+      lines.push("");
+      lines.push("```text");
+      lines.push(tail || "(empty)");
+      lines.push("```");
+      return { text: lines.join("\n") };
+    },
+  });
+
+  api.registerCommand({
     name: "limits",
     description: "Show model/provider auth expiries and status (best-effort)",
     requireAuth: false,

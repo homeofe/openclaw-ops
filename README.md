@@ -5,6 +5,9 @@ Local ops plugin.
 Commands:
 - `/cron` - list cron jobs + scripts + recent reports
 - `/privacy-scan` - run the GitHub privacy scan and show latest report path
+- `/limits` - show provider auth expiry + observed cooldown windows
+- `/release` - show staging gateway + human GO checklist (QA gate)
+- `/handoff` - show latest openclaw-ops handoff log tail
 
 GitHub Actions:
 - `openclaw-triage-labels` (labeling-only): scans `homeofe/openclaw-*` repos and applies labels `security`, `bug`, or `needs-triage`.
