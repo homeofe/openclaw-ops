@@ -1,0 +1,37 @@
+name: openclaw-triage-labels
+
+on:
+  schedule:
+    # every 6 hours at minute 10
+    - cron: "10 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --disable-pip-version-check requests
+
+      - name: Triage labels across openclaw-* repos (labeling-only)
+        env:
+          TRIAGE_GH_TOKEN: ${{ secrets.TRIAGE_GH_TOKEN }}
+          GH_OWNER: homeofe
+          REPO_PREFIX: openclaw-
+          PER_REPO_LIMIT: "30"
+          SKIP_ARCHIVED: "1"
+          SKIP_FORKS: "1"
+        run: python scripts/triage_labels.py
