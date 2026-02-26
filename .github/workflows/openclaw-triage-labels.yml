@@ -27,6 +27,16 @@ jobs:
       - name: Install dependencies
         run: pip install --disable-pip-version-check requests
 
+      - name: Token diagnostics
+        env:
+          TRIAGE_GH_TOKEN: ${{ secrets.TRIAGE_GH_TOKEN }}
+        run: |
+          if [ -n "$TRIAGE_GH_TOKEN" ]; then
+            echo "TRIAGE_GH_TOKEN is configured"
+          else
+            echo "::warning::TRIAGE_GH_TOKEN is empty or unavailable in this workflow run"
+          fi
+
       - name: Triage labels across openclaw-* repos (labeling-only)
         env:
           # GITHUB_TOKEN: works for openclaw-ops repo only (where this workflow runs)

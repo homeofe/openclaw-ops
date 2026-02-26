@@ -193,14 +193,21 @@ def add_label(s: requests.Session, owner: str, repo: str, issue_number: int, lab
 
 def main() -> int:
     # Prefer Actions' built-in token. Allow explicit override via TRIAGE_GH_TOKEN.
-    token = os.environ.get("TRIAGE_GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    triage_token = os.environ.get("TRIAGE_GH_TOKEN")
+    github_token = os.environ.get("GITHUB_TOKEN")
+    token = triage_token or github_token
     if not token:
         raise SystemExit("Missing env var: GITHUB_TOKEN (or TRIAGE_GH_TOKEN override)")
+    token_source = "TRIAGE_GH_TOKEN" if triage_token else "GITHUB_TOKEN"
     owner = os.environ.get("GH_OWNER", "homeofe")
     prefix = os.environ.get("REPO_PREFIX", "openclaw-")
     per_repo_limit = int(os.environ.get("PER_REPO_LIMIT", "30"))
     skip_archived = bool_env("SKIP_ARCHIVED", True)
     skip_forks = bool_env("SKIP_FORKS", True)
+
+    print(f"token source: {token_source}")
+    if token_source == "GITHUB_TOKEN":
+        print("⚠️  Using GITHUB_TOKEN; cross-repo labeling may be skipped without TRIAGE_GH_TOKEN.")
 
     s = session(token)
 
@@ -244,6 +251,10 @@ def main() -> int:
             f"{API}/repos/{owner}/{repo}/issues",
             params={"state": "open", "per_page": per_repo_limit, "sort": "created", "direction": "desc"},
         )
+        if issues.status_code == 403:
+            print(f"⚠️  Skipping {owner}/{repo}: insufficient permissions to list issues")
+            skipped_repos.append(repo)
+            continue
         if issues.status_code >= 400:
             raise RuntimeError(f"List issues failed for {owner}/{repo}: {issues.status_code} {issues.text}")
         items = issues.json()
