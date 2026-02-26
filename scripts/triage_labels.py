@@ -193,10 +193,11 @@ def main() -> int:
 
     s = session(token)
 
-    # sanity check auth
-    me = s.get(f"{API}/user")
-    if me.status_code >= 400:
-        raise RuntimeError(f"Auth check failed: {me.status_code} {me.text}")
+    # sanity check auth - use /octocat for installation tokens (doesn't require user scope)
+    # The /user endpoint requires user-level access which GitHub Actions GITHUB_TOKEN doesn't have
+    auth_check = s.get(f"{API}/octocat")
+    if auth_check.status_code >= 400:
+        raise RuntimeError(f"Auth check failed: {auth_check.status_code} {auth_check.text}")
 
     repos = list_repos(s, owner)
     repos = [r for r in repos if r.get("name", "").startswith(prefix)]
