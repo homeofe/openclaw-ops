@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """Labeling-only GitHub issue triage across repos.
 
 Safety properties:
@@ -9,7 +9,7 @@ Safety properties:
 Env:
   GITHUB_TOKEN      Default token in GitHub Actions (preferred)
   TRIAGE_GH_TOKEN   Optional override token (fine-grained PAT) if you want explicit token control
-  GH_OWNER          Org/user to scan (default: homeofe)
+  GH_OWNER          Org/user to scan (default: elvatis)
   REPO_PREFIX       Repo name prefix filter (default: openclaw-)
   PER_REPO_LIMIT    Max open issues per repo to consider (default: 30)
   SKIP_ARCHIVED     "1" to skip archived repos
@@ -223,7 +223,7 @@ def main() -> int:
     if not token:
         raise SystemExit("Missing env var: GITHUB_TOKEN (or TRIAGE_GH_TOKEN override)")
     token_source = "TRIAGE_GH_TOKEN" if triage_token else "GITHUB_TOKEN"
-    owner = os.environ.get("GH_OWNER", "homeofe")
+    owner = os.environ.get("GH_OWNER", "elvatis")
     prefix = os.environ.get("REPO_PREFIX", "openclaw-")
     per_repo_limit = int(os.environ.get("PER_REPO_LIMIT", "30"))
     skip_archived = bool_env("SKIP_ARCHIVED", True)

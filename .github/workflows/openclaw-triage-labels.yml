@@ -1,6 +1,6 @@
-# openclaw-triage-labels - Automated issue labeling across openclaw-* repos
+﻿# openclaw-triage-labels - Automated issue labeling across openclaw-* repos
 #
-# This workflow scans all homeofe/openclaw-* repositories for open issues
+# This workflow scans all elvatis/openclaw-* repositories for open issues
 # and applies labels (security, bug, needs-triage) based on keyword analysis.
 #
 # IMPORTANT: Cross-repo access requires a fine-grained PAT
@@ -11,7 +11,7 @@
 #
 # 1. Go to https://github.com/settings/tokens?type=beta
 # 2. Create a fine-grained PAT with:
-#    - Repository access: All repositories (or select all homeofe/openclaw-* repos)
+#    - Repository access: All repositories (or select all elvatis/openclaw-* repos)
 #    - Permissions: Issues (Read and write), Metadata (Read)
 # 3. Go to this repo's Settings > Secrets and variables > Actions
 # 4. Add a repository secret named TRIAGE_GH_TOKEN with the PAT value
@@ -57,7 +57,7 @@ jobs:
           # GITHUB_TOKEN (which only works for this repo).
           TRIAGE_GH_TOKEN: ${{ secrets.TRIAGE_GH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_OWNER: homeofe
+          GH_OWNER: elvatis
           REPO_PREFIX: "openclaw-"
           PER_REPO_LIMIT: "30"
           SKIP_ARCHIVED: "1"

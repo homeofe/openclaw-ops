@@ -1,4 +1,4 @@
-# openclaw-ops: Build Dashboard
+﻿# openclaw-ops: Build Dashboard
 
 > Single source of truth for build health, test coverage, and pipeline state.
 > Updated by agents at the end of every completed task.
@@ -44,11 +44,11 @@ Operational commands for OpenClaw:
 
 | Issue | Title | Labels | Priority | Status |
 |-------|-------|--------|----------|--------|
-| [#1](https://github.com/homeofe/openclaw-ops/issues/1) | Extract shared utilities into a common module | enhancement | High | Done |
-| [#2](https://github.com/homeofe/openclaw-ops/issues/2) | Add test infrastructure and basic command tests | enhancement | High | Done |
-| [#3](https://github.com/homeofe/openclaw-ops/issues/3) | Implement Phase 2 /config command | enhancement | Medium | Done |
-| [#4](https://github.com/homeofe/openclaw-ops/issues/4) | Fix Windows disk usage detection in /health | bug | Medium | Done |
-| [#5](https://github.com/homeofe/openclaw-ops/issues/5) | Fix triage CI workflow cross-repo 403 errors | bug | Low | Blocked |
+| [#1](https://github.com/elvatis/openclaw-ops/issues/1) | Extract shared utilities into a common module | enhancement | High | Done |
+| [#2](https://github.com/elvatis/openclaw-ops/issues/2) | Add test infrastructure and basic command tests | enhancement | High | Done |
+| [#3](https://github.com/elvatis/openclaw-ops/issues/3) | Implement Phase 2 /config command | enhancement | Medium | Done |
+| [#4](https://github.com/elvatis/openclaw-ops/issues/4) | Fix Windows disk usage detection in /health | bug | Medium | Done |
+| [#5](https://github.com/elvatis/openclaw-ops/issues/5) | Fix triage CI workflow cross-repo 403 errors | bug | Low | Blocked |
 
 ---
 
@@ -56,7 +56,7 @@ Operational commands for OpenClaw:
 
 | ID | Task | Priority | Blocked by | Ready? | GitHub Issue |
 |----|------|----------|-----------|--------|--------------|
-| T-003 | Fix and re-enable triage CI | LOW | 403 permission issue | Blocked | [#5](https://github.com/homeofe/openclaw-ops/issues/5) |
+| T-003 | Fix and re-enable triage CI | LOW | 403 permission issue | Blocked | [#5](https://github.com/elvatis/openclaw-ops/issues/5) |
 
 ## Completed Tasks
 

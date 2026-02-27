@@ -1,4 +1,4 @@
-{
+﻿{
   "aahp_version": "3.0",
   "project": "openclaw-ops",
   "last_session": {
@@ -86,7 +86,7 @@
       "depends_on": [],
       "blocked_by": "403 cross-repo permission error - needs PAT with repo scope",
       "created": "2026-02-26T23:16:45Z",
-      "github_issue": "https://github.com/homeofe/openclaw-ops/issues/5"
+      "github_issue": "https://github.com/elvatis/openclaw-ops/issues/5"
     },
     "T-004": {
       "title": "Extract shared utilities into a common module",
@@ -94,7 +94,7 @@
       "priority": "high",
       "depends_on": [],
       "created": "2026-02-27T01:50:00Z",
-      "github_issue": "https://github.com/homeofe/openclaw-ops/issues/1",
+      "github_issue": "https://github.com/elvatis/openclaw-ops/issues/1",
       "completed": "2026-02-27T03:15:22.803Z"
     },
     "T-005": {
@@ -105,7 +105,7 @@
         "T-004"
       ],
       "created": "2026-02-27T01:50:00Z",
-      "github_issue": "https://github.com/homeofe/openclaw-ops/issues/2",
+      "github_issue": "https://github.com/elvatis/openclaw-ops/issues/2",
       "completed": "2026-02-27T03:36:07.094Z"
     },
     "T-006": {
@@ -116,7 +116,7 @@
         "T-004"
       ],
       "created": "2026-02-27T01:50:00Z",
-      "github_issue": "https://github.com/homeofe/openclaw-ops/issues/3",
+      "github_issue": "https://github.com/elvatis/openclaw-ops/issues/3",
       "completed": "2026-02-27T03:53:46.026Z"
     },
     "T-008": {
@@ -134,7 +134,7 @@
       "priority": "high",
       "depends_on": [],
       "created": "2026-02-27T08:40:56Z",
-      "github_issue": "https://github.com/homeofe/openclaw-ops/issues/4",
+      "github_issue": "https://github.com/elvatis/openclaw-ops/issues/4",
       "completed": "2026-02-27T07:48:24.685Z"
     }
   }

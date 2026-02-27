@@ -1,4 +1,4 @@
-# openclaw-ops
+﻿# openclaw-ops
 
 Local ops plugin.
 
@@ -64,7 +64,7 @@ openclaw services      # All services
 
 ### openclaw-triage-labels
 
-Automated issue labeling across all `homeofe/openclaw-*` repositories. Runs daily at 06:00 UTC and can be triggered manually via `workflow_dispatch`.
+Automated issue labeling across all `elvatis/openclaw-*` repositories. Runs daily at 06:00 UTC and can be triggered manually via `workflow_dispatch`.
 
 Applies labels based on keyword analysis:
 - `security` - security-related issues (CVE, vulnerability, XSS, etc.)
@@ -77,7 +77,7 @@ The default `GITHUB_TOKEN` is scoped to `openclaw-ops` only. To label issues in 
 
 1. Go to [GitHub token settings](https://github.com/settings/tokens?type=beta)
 2. Create a fine-grained PAT with:
-   - **Repository access**: All repositories (or select all `homeofe/openclaw-*` repos)
+   - **Repository access**: All repositories (or select all `elvatis/openclaw-*` repos)
    - **Permissions**: Issues (Read and write), Metadata (Read)
 3. Go to this repo's **Settings > Secrets and variables > Actions**
 4. Add a repository secret named `TRIAGE_GH_TOKEN` with the PAT value

@@ -1,4 +1,4 @@
-# openclaw-ops: Current State of the Nation
+﻿# openclaw-ops: Current State of the Nation
 
 > Last updated: 2026-02-27 by claude-opus-4.6 (T-007 Windows disk fix)
 > Commit: pending
@@ -98,11 +98,11 @@ Defined 2026-02-27. Five GitHub issues created:
 
 | Issue | Title | Priority | Status |
 |-------|-------|----------|--------|
-| [#1](https://github.com/homeofe/openclaw-ops/issues/1) | Extract shared utilities into a common module | High | Done |
-| [#2](https://github.com/homeofe/openclaw-ops/issues/2) | Add test infrastructure and basic command tests | High | Done |
-| [#3](https://github.com/homeofe/openclaw-ops/issues/3) | Implement Phase 2 /config command | Medium | Done |
-| [#4](https://github.com/homeofe/openclaw-ops/issues/4) | Fix Windows disk usage detection in /health | Medium | Done |
-| [#5](https://github.com/homeofe/openclaw-ops/issues/5) | Fix triage CI workflow cross-repo 403 errors | Low | Open |
+| [#1](https://github.com/elvatis/openclaw-ops/issues/1) | Extract shared utilities into a common module | High | Done |
+| [#2](https://github.com/elvatis/openclaw-ops/issues/2) | Add test infrastructure and basic command tests | High | Done |
+| [#3](https://github.com/elvatis/openclaw-ops/issues/3) | Implement Phase 2 /config command | Medium | Done |
+| [#4](https://github.com/elvatis/openclaw-ops/issues/4) | Fix Windows disk usage detection in /health | Medium | Done |
+| [#5](https://github.com/elvatis/openclaw-ops/issues/5) | Fix triage CI workflow cross-repo 403 errors | Low | Open |
 
 Remaining: #5 (CI fix, requires PAT setup)
 
@@ -115,7 +115,7 @@ Remaining: #5 (CI fix, requires PAT setup)
 
 | Gap | Severity | Description | Tracked |
 |-----|----------|-------------|---------|
-| Triage CI | LOW | Suspended - 403 cross-repo failures, needs PAT | [#5](https://github.com/homeofe/openclaw-ops/issues/5) |
+| Triage CI | LOW | Suspended - 403 cross-repo failures, needs PAT | [#5](https://github.com/elvatis/openclaw-ops/issues/5) |
 
 <!-- /SECTION: what_is_missing -->
 

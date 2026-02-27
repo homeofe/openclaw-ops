@@ -1,4 +1,4 @@
-# openclaw-ops: Agent Journal
+﻿# openclaw-ops: Agent Journal
 
 > **Append-only.** Never delete or edit past entries.
 > Every agent session adds a new entry at the top.
@@ -74,11 +74,11 @@
 - Analyzed full codebase (index.ts, extensions/phase1-commands.ts, all handoff files) to identify gaps and improvements
 - Created GitHub labels: high-priority, medium-priority, low-priority
 - Created 5 GitHub issues defining the v0.2 roadmap:
-  - [#1](https://github.com/homeofe/openclaw-ops/issues/1) - Extract shared utilities into a common module (HIGH)
-  - [#2](https://github.com/homeofe/openclaw-ops/issues/2) - Add test infrastructure and basic command tests (HIGH)
-  - [#3](https://github.com/homeofe/openclaw-ops/issues/3) - Implement Phase 2 /config command (MEDIUM)
-  - [#4](https://github.com/homeofe/openclaw-ops/issues/4) - Fix Windows disk usage detection in /health (MEDIUM)
-  - [#5](https://github.com/homeofe/openclaw-ops/issues/5) - Fix triage CI workflow cross-repo 403 errors (LOW)
+  - [#1](https://github.com/elvatis/openclaw-ops/issues/1) - Extract shared utilities into a common module (HIGH)
+  - [#2](https://github.com/elvatis/openclaw-ops/issues/2) - Add test infrastructure and basic command tests (HIGH)
+  - [#3](https://github.com/elvatis/openclaw-ops/issues/3) - Implement Phase 2 /config command (MEDIUM)
+  - [#4](https://github.com/elvatis/openclaw-ops/issues/4) - Fix Windows disk usage detection in /health (MEDIUM)
+  - [#5](https://github.com/elvatis/openclaw-ops/issues/5) - Fix triage CI workflow cross-repo 403 errors (LOW)
 - Updated DASHBOARD.md with v0.2 roadmap issue table and T-004 through T-007 task IDs
 - Updated STATUS.md with roadmap section and current state
 - Updated NEXT_ACTIONS.md with prioritized work items linked to GitHub issues
@@ -113,7 +113,7 @@
 - 2026-02-24: Added /limits (auth expiry + cooldown windows).
 - 2026-02-25: Adjusted `assets/logo-256.png` to keep the logo centered within GitHub avatar safe area.
 - 2026-02-25: Disabled 40 risky GitHub automation cron jobs (`ghwatch-*` and `ghtriage-*`) that could auto-spawn fix agents / open PRs.
-- 2026-02-25: Added GitHub Actions workflow `openclaw-triage-labels` (labeling-only) + `scripts/triage_labels.py` to triage and label issues across all `homeofe/openclaw-*` repos (skip archived/forks). Commit: 0275eb0.
+- 2026-02-25: Added GitHub Actions workflow `openclaw-triage-labels` (labeling-only) + `scripts/triage_labels.py` to triage and label issues across all `elvatis/openclaw-*` repos (skip archived/forks). Commit: 0275eb0.
 - 2026-02-25: Updated `openclaw-triage-labels` to use `secrets.GITHUB_TOKEN` by default (with `issues: write`), optional override via `TRIAGE_GH_TOKEN`. Documented in README.
 - 2026-02-25: Added QA documentation + commands: `RELEASE.md` (staging gateway + GO checklist), `/release` (prints QA gate), `/handoff` (shows recent handoff log tail). Updated README command list.
 - 2026-02-25: Updated Elvatis blog post “How I Run an Autonomous AI Assistant Without Losing Control” live via Ghost Admin API: added `openclaw-ops` to plugin stack, tightened wording around self-healing scope, updated rollout discipline section to include staging + human GO, and extended the conclusion with QA gate step.
