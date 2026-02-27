@@ -258,58 +258,68 @@ def main() -> int:
         repo = r["name"]
         per_repo[repo] = Counts()
 
-        # Ensure labels exist (check permissions first)
-        has_access = True
-        for lname, meta in LABELS.items():
-            if not ensure_label(s, owner, repo, lname, meta["color"], meta["description"]):
-                has_access = False
-                break
-        
-        if not has_access:
-            print(f"⚠️  Skipping {owner}/{repo}: insufficient permissions")
-            skipped_repos.append(repo)
-            continue
+        try:
+            # Ensure labels exist (check permissions first)
+            has_access = True
+            for lname, meta in LABELS.items():
+                if not ensure_label(s, owner, repo, lname, meta["color"], meta["description"]):
+                    has_access = False
+                    break
 
-        # Fetch open issues (GitHub's /issues includes PRs; filter them)
-        issues = s.get(
-            f"{API}/repos/{owner}/{repo}/issues",
-            params={"state": "open", "per_page": per_repo_limit, "sort": "created", "direction": "desc"},
-        )
-        if issues.status_code == 403:
-            print(f"⚠️  Skipping {owner}/{repo}: insufficient permissions to list issues")
-            skipped_repos.append(repo)
-            continue
-        if issues.status_code >= 400:
-            raise RuntimeError(f"List issues failed for {owner}/{repo}: {issues.status_code} {issues.text}")
-        items = issues.json()
-        if not isinstance(items, list):
-            raise RuntimeError(f"Expected list issues for {owner}/{repo}")
-
-        for item in items:
-            if "pull_request" in item:
+            if not has_access:
+                print(f"  [SKIP] {owner}/{repo}: insufficient permissions (cannot manage labels)")
+                skipped_repos.append(repo)
                 continue
 
-            number = int(item["number"])
-            title = item.get("title") or ""
-            body = item.get("body") or ""
-            existing = {lbl.get("name") for lbl in item.get("labels", []) if isinstance(lbl, dict)}
-
-            # Skip if already triaged as bug/security
-            if "bug" in existing or "security" in existing:
+            # Fetch open issues (GitHub's /issues includes PRs; filter them)
+            issues = s.get(
+                f"{API}/repos/{owner}/{repo}/issues",
+                params={"state": "open", "per_page": per_repo_limit, "sort": "created", "direction": "desc"},
+            )
+            if issues.status_code == 403:
+                print(f"  [SKIP] {owner}/{repo}: insufficient permissions to list issues")
+                skipped_repos.append(repo)
+                continue
+            if issues.status_code >= 400:
+                print(f"  [WARN] {owner}/{repo}: list issues returned {issues.status_code}, skipping")
+                skipped_repos.append(repo)
+                continue
+            items = issues.json()
+            if not isinstance(items, list):
+                print(f"  [WARN] {owner}/{repo}: unexpected response from issues endpoint, skipping")
+                skipped_repos.append(repo)
                 continue
 
-            label = classify(f"{title}\n{body}")
-            if add_label(s, owner, repo, number, label):
-                c = per_repo[repo]
-                if label == "security":
-                    c.security += 1
-                    total.security += 1
-                elif label == "bug":
-                    c.bug += 1
-                    total.bug += 1
-                else:
-                    c.needs_triage += 1
-                    total.needs_triage += 1
+            for item in items:
+                if "pull_request" in item:
+                    continue
+
+                number = int(item["number"])
+                title = item.get("title") or ""
+                body = item.get("body") or ""
+                existing = {lbl.get("name") for lbl in item.get("labels", []) if isinstance(lbl, dict)}
+
+                # Skip if already triaged as bug/security
+                if "bug" in existing or "security" in existing:
+                    continue
+
+                label = classify(f"{title}\n{body}")
+                if add_label(s, owner, repo, number, label):
+                    c = per_repo[repo]
+                    if label == "security":
+                        c.security += 1
+                        total.security += 1
+                    elif label == "bug":
+                        c.bug += 1
+                        total.bug += 1
+                    else:
+                        c.needs_triage += 1
+                        total.needs_triage += 1
+
+        except Exception as exc:
+            # Never let a single repo crash the entire triage run
+            print(f"  [ERROR] {owner}/{repo}: {exc}")
+            skipped_repos.append(repo)
 
     # Print a GitHub Actions-friendly summary
     print("\n== openclaw triage summary ==")
