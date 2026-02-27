@@ -3,11 +3,11 @@
   "project": "openclaw-ops",
   "last_session": {
     "agent": "claude-code",
-    "session_id": "t005-test-infrastructure-2026-02-27",
-    "timestamp": "2026-02-27T03:36:07.094Z",
+    "session_id": "t006-config-command-2026-02-27",
+    "timestamp": "2026-02-27T04:52:00Z",
     "commit": "pending",
     "phase": "implementation",
-    "duration_minutes": 2
+    "duration_minutes": 5
   },
   "files": {
     "STATUS.md": {
@@ -53,7 +53,7 @@
       "summary": "2-agent pipeline. Safety rules: no secrets in output, staging gate required."
     }
   },
-  "quick_context": "openclaw-ops v0.2.0 active plugin. All commands working. 133 vitest tests passing across 6 test files. Test coverage: src/utils.ts (45 tests), index.ts entry point (6 tests), phase1-commands (18 tests), legacy-commands (24 tests), observer-commands (24 tests), skills-commands (16 tests). src/test-helpers.ts provides shared mock API for command testing. T-005 (tests) done, T-006 (config) ready, T-003 (triage) blocked.",
+  "quick_context": "openclaw-ops v0.2.0 active plugin. All commands working. 158 vitest tests passing across 7 test files. Test coverage: src/utils.ts (45 tests), index.ts entry point (6 tests), phase1-commands (18 tests), legacy-commands (24 tests), observer-commands (24 tests), skills-commands (16 tests), config-commands (25 tests). T-006 (config) done, T-003 (triage) blocked.",
   "token_budget": {
     "manifest_only": 100,
     "manifest_plus_core": 450,
@@ -110,13 +110,15 @@
     },
     "T-006": {
       "title": "Implement Phase 2 /config command",
-      "status": "ready",
+      "status": "done",
       "priority": "medium",
       "depends_on": [
         "T-004"
       ],
       "created": "2026-02-27T01:50:00Z",
-      "github_issue": "https://github.com/homeofe/openclaw-ops/issues/3"
+      "github_issue": "https://github.com/homeofe/openclaw-ops/issues/3",
+      "completed": "2026-02-27T04:52:00Z",
+      "note": "config-commands.ts: /config overview (env, main config, plugin configs, env vars) + /config <plugin> detail (metadata, active config, schema validation, defaults comparison, resolved paths). Secret masking for API keys/tokens. 25 tests."
     },
     "T-008": {
       "title": "Add /skills and /shortcuts commands",

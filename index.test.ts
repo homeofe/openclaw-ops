@@ -38,6 +38,9 @@ describe("register (entry point)", () => {
     // Skills commands
     expect(api.commands.has("skills")).toBe(true);
     expect(api.commands.has("shortcuts")).toBe(true);
+
+    // Config commands
+    expect(api.commands.has("config")).toBe(true);
   });
 
   it("does not register commands when enabled is false", () => {
@@ -66,10 +69,10 @@ describe("register (entry point)", () => {
     expect(api.eventHandlers.get("message_received")!.length).toBeGreaterThan(0);
   });
 
-  it("registers exactly 17 commands total", () => {
+  it("registers exactly 18 commands total", () => {
     const api = createMockApi();
     register(api);
-    // 4 phase1 + 6 legacy + 5 observer + 2 skills = 17
-    expect(api.commands.size).toBe(17);
+    // 4 phase1 + 6 legacy + 5 observer + 2 skills + 1 config = 18
+    expect(api.commands.size).toBe(18);
   });
 });

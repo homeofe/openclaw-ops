@@ -2,6 +2,7 @@ import path from "node:path";
 import { registerPhase1Commands } from "./extensions/phase1-commands.js";
 import { registerObserverCommands } from "./extensions/observer-commands.js";
 import { registerSkillsCommands } from "./extensions/skills-commands.js";
+import { registerConfigCommands } from "./extensions/config-commands.js";
 import { registerLegacyCommands } from "./extensions/legacy-commands.js";
 import { expandHome } from "./src/utils.js";
 
@@ -25,4 +26,7 @@ export default function register(api: any) {
 
   // Skills & shortcuts commands (/skills, /shortcuts)
   registerSkillsCommands(api, workspace);
+
+  // Config management commands (/config)
+  registerConfigCommands(api, workspace);
 }

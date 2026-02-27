@@ -10,6 +10,10 @@ Local ops plugin.
 - `/logs [service] [lines]` - View gateway or plugin logs (defaults: gateway, 50 lines)
 - `/plugins` - Detailed plugin dashboard with versions and workspace info
 
+### Configuration (Phase 2)
+- `/config` - Show configuration overview (environment, main config, plugin configs, env vars)
+- `/config <plugin>` - Show detailed config for a specific plugin (values, schema validation, defaults comparison)
+
 ### Legacy Commands
 - `/cron` - list cron jobs + scripts + recent reports
 - `/privacy-scan` - run the GitHub privacy scan and show latest report path
