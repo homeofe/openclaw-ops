@@ -29,6 +29,7 @@ on:
     # Allow manual triggering for testing
 
 permissions:
+  contents: read
   issues: write
 
 jobs:
