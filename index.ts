@@ -257,67 +257,80 @@ export default function register(api: any) {
 
   api.registerCommand({
     name: "limits",
-    description: "Show model/provider auth expiries and status (best-effort)",
+    description: "Show model/provider auth expiries and rate-limit cooldowns",
     requireAuth: false,
     acceptsArgs: false,
     handler: async () => {
-      // Today, `openclaw models status` does not expose per-model rate-limit reset times.
-      // What we CAN show reliably is the auth token/OAuth expiry window per provider,
-      // which is often the next hard stop in practice.
       const out = safeExec("openclaw models status");
-      if (!out) return { text: "Failed to run: openclaw models status" };
+      if (!out) return { text: "Limits\n\n✗ Failed to run: openclaw models status" };
 
       const lines = out.split("\n");
 
-      // Extract key header lines (keep it minimal, no full model dump)
+      // Extract key header lines
       const pick = (prefix: string) => lines.find((l) => l.startsWith(prefix)) ?? "";
-      const header = [pick("Default"), pick("Fallbacks")].filter(Boolean);
+      const defaultModel = pick("Default");
+      const fallbacks = pick("Fallbacks");
 
       // Extract OAuth/token expiry section
       const startIdx = lines.findIndex((l) => l.trim() === "OAuth/token status");
-      const expiry: string[] = [];
+      const expiryLines: string[] = [];
       if (startIdx >= 0) {
         for (const l of lines.slice(startIdx + 1)) {
-          // stop when another top-level header starts
           if (l.trim() && !l.startsWith("-") && !l.startsWith(" ") && !l.startsWith("\t")) break;
           if (!l.trim()) continue;
-          if (/^\s*-\s+/.test(l) || /^\s{2,}-\s+/.test(l)) expiry.push(l);
+          if (/^\s*-\s+/.test(l) || /^\s{2,}-\s+/.test(l)) expiryLines.push(l.trim().replace(/^-\s*/, ""));
         }
       }
 
       const msg: string[] = [];
-      msg.push("Limits");
+      msg.push("Limits & Auth");
 
-      // Section: Config
-      if (header.length) {
-        msg.push("");
-        msg.push("CONFIG");
-        msg.push("```text");
-        for (const h of header) msg.push(h);
-        msg.push("```");
-      }
-
-      // Section: Auth expiry (hard stop)
+      // Section: Model config
       msg.push("");
-      msg.push("AUTH EXPIRY (hard stop)");
-      if (expiry.length) {
-        msg.push("```text");
-        for (const l of expiry.slice(0, 120)) msg.push(l);
-        if (expiry.length > 120) msg.push("... (truncated)");
-        msg.push("```");
+      msg.push("MODELS");
+      if (defaultModel) msg.push(`- ${defaultModel}`);
+      if (fallbacks) msg.push(`- ${fallbacks}`);
+      if (!defaultModel && !fallbacks) msg.push("- (unable to read model config)");
+
+      // Section: Auth expiry with status icons
+      msg.push("");
+      msg.push("AUTH EXPIRY");
+      if (expiryLines.length) {
+        const now = Date.now();
+        for (const line of expiryLines.slice(0, 20)) {
+          // Try to parse remaining days from patterns like "23d remaining" or dates
+          const daysMatch = line.match(/(\d+)d?\s*remaining/i);
+          const dateMatch = line.match(/expires?:?\s*(\d{4}-\d{2}-\d{2})/i);
+          let icon = "✓";
+          let daysLeft: number | null = null;
+
+          if (daysMatch) {
+            daysLeft = parseInt(daysMatch[1]);
+          } else if (dateMatch) {
+            const expDate = new Date(dateMatch[1]).getTime();
+            daysLeft = Math.floor((expDate - now) / 86_400_000);
+          }
+
+          if (daysLeft !== null) {
+            if (daysLeft <= 0) icon = "✗";
+            else if (daysLeft <= 7) icon = "⚠";
+          }
+
+          msg.push(`${icon} ${line}`);
+        }
       } else {
-        msg.push("(not found in CLI output)");
+        msg.push("- (no auth expiry data in CLI output)");
       }
 
-      // Section: Rate-limit cooldowns (observed)
+      // Section: Rate-limit cooldowns
       msg.push("");
-      msg.push("RATE LIMIT COOLDOWNS (observed)");
+      msg.push("COOLDOWNS");
       try {
         const statePath = path.join(workspace, "memory", "model-ratelimits.json");
         const now = Math.floor(Date.now() / 1000);
 
         if (!fs.existsSync(statePath)) {
-          msg.push("None recorded yet. (Shows up after first 429/quota event via model-failover.)");
+          msg.push("- None recorded (appears after first 429 via model-failover)");
         } else {
           const raw = fs.readFileSync(statePath, "utf-8");
           const st = JSON.parse(raw) as any;
@@ -327,32 +340,26 @@ export default function register(api: any) {
             .map(([model, v]) => ({ model, ...v }))
             .filter((v) => typeof v.nextAvailableAt === "number" && v.nextAvailableAt > now)
             .sort((a, b) => a.nextAvailableAt - b.nextAvailableAt)
-            .slice(0, 50);
+            .slice(0, 20);
 
           if (!active.length) {
-            msg.push("None active.");
+            msg.push("✓ None active");
           } else {
-            // pretty aligned table
-            const modelW = Math.min(42, Math.max(...active.map((a) => a.model.length)));
-            msg.push("```text");
-            msg.push(`${"MODEL".padEnd(modelW)}  UNTIL (UTC)                 ETA`);
             for (const a of active) {
               const etaSec = a.nextAvailableAt - now;
-              const etaMin = Math.max(0, Math.round(etaSec / 60));
-              const untilIso = new Date(a.nextAvailableAt * 1000).toISOString().replace(".000Z", "Z");
-              msg.push(`${a.model.padEnd(modelW)}  ${untilIso}  ~${etaMin}m`);
+              const etaMin = Math.max(1, Math.round(etaSec / 60));
+              const until = new Date(a.nextAvailableAt * 1000).toISOString().slice(0, 16).replace("T", " ");
+              msg.push(`⚠ ${a.model} - ${until} UTC (~${etaMin}m)`);
+              if (a.reason) msg.push(`  Reason: ${a.reason}`);
             }
-            msg.push("```");
           }
         }
       } catch {
-        msg.push("Failed to read local cooldown state.");
+        msg.push("- Failed to read cooldown state");
       }
 
       msg.push("");
-      msg.push("NOTE");
-      msg.push("OpenClaw does not expose per-model token remaining, quota counters, or official reset timestamps via CLI/API today.");
-      msg.push("This command reports provider auth expiry and observed cooldown windows from local failover state.");
+      msg.push("Best-effort data from local state and CLI. Per-model quotas not exposed by OpenClaw.");
 
       return { text: msg.join("\n") };
     },

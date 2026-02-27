@@ -6,6 +6,33 @@
 
 ---
 
+## 2026-02-27 T-001: Improve /limits command output
+
+**Agent:** claude-opus-4.6
+**Phase:** implementation
+**Commit:** pending
+
+### What was done
+
+- Reformatted /limits output to match Phase 1 command style (/health, /services)
+- Added status icons for auth expiry: ✓ (healthy, >7d), ⚠ (expiring, <=7d), ✗ (expired)
+- Added status icons for cooldowns: ✓ (none active), ⚠ (active cooldowns)
+- Replaced code blocks with clean bullet-point format for model config
+- Parsed auth expiry lines to extract remaining days for icon assignment
+- Showed cooldown reason field when available from model-failover state
+- Condensed verbose 3-line NOTE into a single-line hint
+- Renamed sections: CONFIG -> MODELS, AUTH EXPIRY (hard stop) -> AUTH EXPIRY, RATE LIMIT COOLDOWNS (observed) -> COOLDOWNS
+- All 18 existing tests pass, TypeScript type-check clean
+
+### Key decisions
+
+- Used same icon vocabulary as /health (✓, ⚠, ✗) for visual consistency
+- Set warning threshold at 7 days for auth expiry - matches typical token renewal cadence
+- Capped cooldown display at 20 entries (down from 50) since more is rarely useful in chat
+- Removed code blocks - they add visual noise for what is essentially a status dashboard
+
+---
+
 ## 2026-02-27 v0.2 Roadmap Definition
 
 **Agent:** claude-opus-4.6

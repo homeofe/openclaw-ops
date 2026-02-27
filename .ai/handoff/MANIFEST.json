@@ -3,11 +3,11 @@
   "project": "openclaw-ops",
   "last_session": {
     "agent": "claude-opus-4.6",
-    "session_id": "v02-roadmap-2026-02-27",
-    "timestamp": "2026-02-27T01:50:00Z",
+    "session_id": "t001-limits-output-2026-02-27",
+    "timestamp": "2026-02-27T02:48:00Z",
     "commit": "pending",
-    "phase": "planning",
-    "duration_minutes": 0
+    "phase": "implementation",
+    "duration_minutes": 15
   },
   "files": {
     "STATUS.md": {
@@ -53,7 +53,7 @@
       "summary": "2-agent pipeline. Safety rules: no secrets in output, staging gate required."
     }
   },
-  "quick_context": "openclaw-ops v0.2.0 active plugin. Phase 1 commands (/health, /services, /logs, /plugins) + legacy commands (/cron, /privacy-scan, /limits, /release, /handoff, /staging-smoke) all working. Triage CI suspended (403). v0.2 roadmap defined: 5 GitHub issues covering utility refactor (#1), test infrastructure (#2), /config command (#3), Windows disk fix (#4), triage CI fix (#5). Recommended order: #1 -> #2 -> #4 -> #3 -> #5.",
+  "quick_context": "openclaw-ops v0.2.0 active plugin. Phase 1 commands (/health, /services, /logs, /plugins) + legacy commands all working. T-001 done: /limits output improved with status icons, auth expiry parsing, cleaner formatting. Triage CI suspended (403). v0.2 roadmap: 5 GitHub issues. T-004 (utils) done, T-005 (tests) ready, T-007 (win disk) ready, T-006 (config) ready, T-003 (triage) blocked.",
   "token_budget": {
     "manifest_only": 100,
     "manifest_plus_core": 450,
@@ -63,11 +63,12 @@
   "tasks": {
     "T-001": {
       "title": "Improve /limits command output",
-      "status": "ready",
+      "status": "done",
       "priority": "medium",
       "depends_on": [],
       "created": "2026-02-26T23:16:45Z",
-      "note": "Covered by T-004 refactor"
+      "completed": "2026-02-27T02:48:00Z",
+      "note": "Reformatted to match Phase 1 style: status icons, cleaner sections, auth expiry parsing with urgency indicators"
     },
     "T-002": {
       "title": "Add active cooldown detection from model-failover state",
