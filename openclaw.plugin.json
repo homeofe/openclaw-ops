@@ -1,8 +1,8 @@
 {
   "id": "openclaw-ops",
   "name": "OpenClaw Ops",
-  "version": "0.1.5",
-  "description": "Operational commands: /cron dashboard and /privacy-scan runner.",
+  "version": "0.2.0",
+  "description": "Operational commands: dashboards, monitoring, and management.",
   "configSchema": {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",

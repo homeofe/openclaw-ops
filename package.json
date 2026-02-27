@@ -1,7 +1,11 @@
 {
   "name": "openclaw-ops",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "openclaw": { "extensions": ["./index.ts"] }
+  "openclaw": { "extensions": ["./index.ts"] },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
 }

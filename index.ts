@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
 import { execSync, spawnSync } from "node:child_process";
+import { registerPhase1Commands } from "./extensions/phase1-commands.js";
 
 function expandHome(p: string): string {
   if (!p) return p;
@@ -397,4 +398,7 @@ export default function register(api: any) {
       return { text: msg.join("\n") };
     },
   });
+
+  // Register Phase 1 operational commands
+  registerPhase1Commands(api, workspace);
 }
