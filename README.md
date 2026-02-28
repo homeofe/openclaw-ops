@@ -62,6 +62,15 @@ openclaw services      # All services
 
 ## GitHub Actions
 
+## Shared Template
+
+For plugins that auto-create GitHub issues, use the reusable helper template in `src/templates/github-issue-helper.ts`.
+
+It provides:
+- `isValidIssueRepoSlug()` for strict `owner/repo` validation
+- `resolveIssueRepo()` for config -> environment -> default fallback
+- `buildGhIssueCreateCommand()` for shell-safe `gh issue create` command construction
+
 ### openclaw-triage-labels
 
 Automated issue labeling across all `elvatis/openclaw-*` repositories. Runs daily at 06:00 UTC and can be triggered manually via `workflow_dispatch`.
