@@ -7,8 +7,8 @@ Safety properties:
 - Does NOT remove existing labels.
 
 Env:
-  GITHUB_TOKEN      Default token in GitHub Actions (preferred)
-  TRIAGE_GH_TOKEN   Optional override token (fine-grained PAT) if you want explicit token control
+  TRIAGE_GH_TOKEN   Preferred token for cross-repo access (fine-grained PAT or OAuth token)
+  GITHUB_TOKEN      Fallback - default Actions token, scoped to current repo only
   GH_OWNER          Org/user to scan (default: elvatis)
   REPO_PREFIX       Repo name prefix filter (default: openclaw-)
   PER_REPO_LIMIT    Max open issues per repo to consider (default: 30)
@@ -216,12 +216,12 @@ def add_label(s: requests.Session, owner: str, repo: str, issue_number: int, lab
 
 
 def main() -> int:
-    # Prefer Actions' built-in token. Allow explicit override via TRIAGE_GH_TOKEN.
+    # Prefer TRIAGE_GH_TOKEN (cross-repo PAT); fall back to GITHUB_TOKEN (single-repo).
     triage_token = os.environ.get("TRIAGE_GH_TOKEN")
     github_token = os.environ.get("GITHUB_TOKEN")
     token = triage_token or github_token
     if not token:
-        raise SystemExit("Missing env var: GITHUB_TOKEN (or TRIAGE_GH_TOKEN override)")
+        raise SystemExit("Missing env var: TRIAGE_GH_TOKEN or GITHUB_TOKEN")
     token_source = "TRIAGE_GH_TOKEN" if triage_token else "GITHUB_TOKEN"
     owner = os.environ.get("GH_OWNER", "elvatis")
     prefix = os.environ.get("REPO_PREFIX", "openclaw-")

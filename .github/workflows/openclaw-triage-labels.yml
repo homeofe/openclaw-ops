@@ -51,9 +51,19 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
+      - name: Check token scope
+        env:
+          TRIAGE_GH_TOKEN: ${{ secrets.TRIAGE_GH_TOKEN }}
+        run: |
+          if [ -n "$TRIAGE_GH_TOKEN" ]; then
+            echo "TRIAGE_GH_TOKEN is configured - cross-repo triage enabled"
+          else
+            echo "::warning::TRIAGE_GH_TOKEN not set - only this repo will be triaged. See README for PAT setup."
+          fi
+
       - name: Run triage labeling
         env:
-          # Use the fine-grained PAT if available; fall back to the default
+          # Use the cross-repo PAT if available; fall back to the default
           # GITHUB_TOKEN (which only works for this repo).
           TRIAGE_GH_TOKEN: ${{ secrets.TRIAGE_GH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
